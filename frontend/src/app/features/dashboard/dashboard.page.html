@@ -1,0 +1,24 @@
+<div class="page-heading"><div><p class="eyebrow">RESUMEN OPERATIVO</p><h1>Dashboard</h1><p>Indicadores de la sede activa y movimientos recientes.</p></div></div>
+@if (error()) { <div class="alert error">{{ error() }}</div> }
+@if (cargando()) { <div class="loading">Cargando información...</div> } @else {
+  <section class="metric-grid" aria-label="Indicadores">
+    <article class="metric"><span>Productos activos</span><strong>{{ productos().length }}</strong><small>Catálogo disponible</small></article>
+    <article class="metric"><span>Existencias registradas</span><strong>{{ existencias().length }}</strong><small>Productos con saldo</small></article>
+    <article class="metric warning"><span>Stock bajo</span><strong>{{ bajoMinimo().length }}</strong><small>Requieren revisión</small></article>
+    <article class="metric"><span>Movimientos recientes</span><strong>{{ movimientos().length }}</strong><small>Últimos registros</small></article>
+  </section>
+  <div class="content-grid">
+    <section class="panel"><div class="panel-heading"><h2>Productos bajo mínimo</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Producto</th><th>Stock</th><th>Mínimo</th></tr></thead><tbody>
+        @for (item of bajoMinimo(); track item.productoId) { <tr><td>{{ item.producto || item.nombre || item.codigo }}</td><td><strong class="danger-text">{{ item.cantidad }}</strong></td><td>{{ item.minimo }}</td></tr> }
+        @empty { <tr><td colspan="3" class="empty">No existen alertas de stock.</td></tr> }
+      </tbody></table></div>
+    </section>
+    <section class="panel"><div class="panel-heading"><h2>Actividad reciente</h2></div>
+      <div class="activity-list">
+        @for (item of movimientos(); track item.id) { <article><span class="status">{{ item.tipo }}</span><div><strong>{{ item.motivo }}</strong><small>{{ item.fecha || item.creadoEn || 'Fecha no disponible' }}</small></div></article> }
+        @empty { <p class="empty">Todavía no hay movimientos.</p> }
+      </div>
+    </section>
+  </div>
+}

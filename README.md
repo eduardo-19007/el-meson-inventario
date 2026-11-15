@@ -2,6 +2,28 @@
 
 Aplicación académica con Java 21 o superior, Spring Boot 4.1.1 y SQL Server. El catálogo existente se conserva. El frontend se sirve desde Spring Boot y sigue la distribución y colores del prototipo Figma.
 
+## Frontend Angular para APF3
+
+La rama `codex/apf3-angular` incorpora un cliente Angular 21 en `frontend/`. Incluye login, rutas protegidas, dashboard, productos, movimientos, formularios reactivos, SASS y consumo de la API existente con sesión HTTP y CSRF.
+
+Para desarrollo, inicia primero Spring Boot en el puerto 8080 y luego Angular:
+
+```powershell
+cd frontend
+npm install
+npm start
+```
+
+Abre http://localhost:4200/. El proxy de Angular envía `/api` y `/actuator` a `http://127.0.0.1:8080`, por lo que la sesión y CSRF funcionan sin configurar CORS durante el desarrollo.
+
+Para comprobar el frontend:
+
+```powershell
+cd frontend
+npm run build
+npm test -- --watch=false
+```
+
 ## Iniciar
 
 Desde PowerShell, en la raíz del proyecto:

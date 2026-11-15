@@ -1,0 +1,28 @@
+<main class="login-page">
+  <section class="login-panel" aria-labelledby="login-title">
+    <div class="brand-mark" aria-hidden="true">EM</div>
+    <p class="eyebrow">EL MESÓN</p>
+    <h1 id="login-title">Control de inventario</h1>
+    <p class="muted">Ingresa con tu cuenta de trabajo.</p>
+
+    @if (error()) { <div class="alert error" role="alert">{{ error() }}</div> }
+
+    <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
+      <label for="usuario">Usuario</label>
+      <input id="usuario" type="text" formControlName="usuario" autocomplete="username" />
+      @if (form.controls.usuario.touched && form.controls.usuario.invalid) {
+        <small>Ingresa un usuario de al menos 3 caracteres.</small>
+      }
+
+      <label for="password">Contraseña</label>
+      <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <small>La contraseña es obligatoria.</small>
+      }
+
+      <button class="button primary full" type="submit" [disabled]="form.invalid || enviando()">
+        {{ enviando() ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+  </section>
+</main>

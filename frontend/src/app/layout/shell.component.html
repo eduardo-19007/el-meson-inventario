@@ -1,0 +1,25 @@
+<div class="app-shell" [class.menu-open]="menuAbierto()">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/dashboard" (click)="menuAbierto.set(false)">
+      <span class="brand-symbol">EM</span><span><strong>El Mesón</strong><small>Inventario</small></span>
+    </a>
+    <nav aria-label="Navegación principal">
+      <a routerLink="/dashboard" routerLinkActive="active" (click)="menuAbierto.set(false)">Resumen</a>
+      <a routerLink="/productos" routerLinkActive="active" (click)="menuAbierto.set(false)">Productos</a>
+      <a routerLink="/movimientos" routerLinkActive="active" (click)="menuAbierto.set(false)">Movimientos</a>
+    </nav>
+    <div class="account">
+      <strong>{{ auth.perfil()?.nombre }}</strong>
+      <span>{{ auth.perfil()?.rol }}</span>
+      <button class="text-button" type="button" (click)="auth.logout()">Cerrar sesión</button>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <button class="menu-button" type="button" aria-label="Abrir menú" (click)="menuAbierto.set(!menuAbierto())">☰</button>
+      <div><strong>Gestión de inventario</strong><span>Operación y control de existencias</span></div>
+    </header>
+    <main class="content"><router-outlet /></main>
+  </div>
+  @if (menuAbierto()) { <button class="backdrop" type="button" aria-label="Cerrar menú" (click)="menuAbierto.set(false)"></button> }
+</div>

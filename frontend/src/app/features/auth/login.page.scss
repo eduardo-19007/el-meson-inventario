@@ -1,0 +1,9 @@
+:host { display: block; min-height: 100dvh; }
+.login-page { min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: #eef3f5; }
+.login-panel { width: min(100%, 390px); padding: 34px; background: #fff; border: 1px solid #dbe3e7; box-shadow: 0 18px 50px rgb(20 50 65 / 12%); }
+.brand-mark { width: 50px; height: 50px; display: grid; place-items: center; margin-bottom: 22px; background: #183f56; color: #fff; border-radius: 6px; font-weight: 800; }
+h1 { margin: 6px 0 8px; font-size: 28px; }
+form { display: grid; gap: 8px; margin-top: 26px; }
+label { margin-top: 8px; font-weight: 650; }
+small { color: #a1362e; }
+.full { width: 100%; margin-top: 16px; }

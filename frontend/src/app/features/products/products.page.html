@@ -1,0 +1,22 @@
+<div class="page-heading"><div><p class="eyebrow">CATÁLOGO</p><h1>Productos</h1><p>Administra los productos e insumos del inventario.</p></div></div>
+@if (mensaje()) { <div class="alert success">{{ mensaje() }}</div> }
+@if (error()) { <div class="alert error">{{ error() }}</div> }
+<div class="content-grid wide-left">
+  <section class="panel"><div class="panel-heading tools"><div><h2>Listado</h2><span>{{ filtrados().length }} registros</span></div><input class="search" type="search" placeholder="Buscar producto" (input)="busqueda.set($any($event.target).value)" /></div>
+    <div class="table-wrap"><table><thead><tr><th>Código</th><th>Producto</th><th>Categoría</th><th>Unidad</th><th>Estado</th>@if (auth.esAdmin()) { <th>Acciones</th> }</tr></thead><tbody>
+      @for (producto of filtrados(); track producto.id) { <tr><td>{{ producto.codigo }}</td><td><strong>{{ producto.nombre }}</strong></td><td>{{ producto.categoria }}</td><td>{{ producto.unidad }}</td><td><span class="status" [class.inactive]="!producto.activo">{{ producto.activo ? 'Activo' : 'Inactivo' }}</span></td>@if (auth.esAdmin()) { <td class="actions"><button class="link-button" type="button" (click)="editar(producto)">Editar</button><button class="link-button" type="button" (click)="cambiarEstado(producto)">{{ producto.activo ? 'Desactivar' : 'Activar' }}</button></td> }</tr> }
+      @empty { <tr><td colspan="6" class="empty">No se encontraron productos.</td></tr> }
+    </tbody></table></div>
+  </section>
+  @if (auth.esAdmin()) { <section class="panel form-panel"><div class="panel-heading"><h2>{{ editando() ? 'Editar producto' : 'Nuevo producto' }}</h2></div>
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      <label for="codigo">Código</label><input id="codigo" formControlName="codigo" />
+      @if (form.controls.codigo.touched && form.controls.codigo.invalid) { <small>El código es obligatorio y admite hasta 30 caracteres.</small> }
+      <label for="nombre">Nombre</label><input id="nombre" formControlName="nombre" />
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) { <small>El nombre es obligatorio y admite hasta 120 caracteres.</small> }
+      <label for="categoria">Categoría</label><select id="categoria" formControlName="categoriaId"><option [ngValue]="null">Selecciona</option>@for (item of categorias(); track item.id) { <option [ngValue]="item.id">{{ item.nombre }}</option> }</select>
+      <label for="unidad">Unidad base</label><select id="unidad" formControlName="unidadId"><option [ngValue]="null">Selecciona</option>@for (item of unidades(); track item.id) { <option [ngValue]="item.id">{{ item.nombre }} ({{ item.codigo }})</option> }</select>
+      <div class="form-actions"><button class="button primary" type="submit" [disabled]="form.invalid || guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button><button class="button secondary" type="button" (click)="cancelar()">Limpiar</button></div>
+    </form>
+  </section> }
+</div>
