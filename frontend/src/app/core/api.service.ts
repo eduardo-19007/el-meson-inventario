@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, switchMap, tap } from 'rxjs';
-import { Categoria, Existencia, Movimiento, Perfil, Producto, Sede, Transferencia, Unidad, Usuario } from './models';
+import { map, Observable, of, switchMap, tap } from 'rxjs';
+import { Categoria, DetalleMovimiento, Existencia, Kardex, Movimiento, Perfil, Producto, Sede, Transferencia, Unidad, Usuario } from './models';
 
 interface CsrfResponse { token: string; headerName: string; }
 type ProductoPayload = Pick<Producto, 'codigo' | 'nombre' | 'categoriaId' | 'unidadId'>;
@@ -44,13 +44,23 @@ export class ApiService {
 
   existencias(sedeId?: number): Observable<Existencia[]> {
     const params = sedeId ? new HttpParams().set('sedeId', sedeId) : undefined;
-    return this.http.get<Existencia[]>('/api/existencias', { params });
+    return this.http.get<any[]>('/api/existencias', { params }).pipe(map((rows) => rows.map((r) => ({
+      sedeId: r.sede_id, sede: r.sede, productoId: r.producto_id, codigo: r.codigo, producto: r.producto,
+      nombre: r.producto, unidad: r.unidad, cantidad: Number(r.cantidad), minimo: Number(r.stock_minimo)
+    }))));
   }
 
   movimientos(sedeId?: number): Observable<Movimiento[]> {
     const params = sedeId ? new HttpParams().set('sedeId', sedeId) : undefined;
-    return this.http.get<Movimiento[]>('/api/movimientos', { params });
+    return this.http.get<any[]>('/api/movimientos', { params }).pipe(map((rows) => rows.map((r) => ({
+      id: r.id, sedeId: r.sede_id, sede: r.sede, tipo: r.tipo, motivo: r.motivo, referencia: r.referencia,
+      proveedor: r.proveedor, fecha: r.fecha_registro, usuario: r.usuario
+    }))));
   }
+
+  detalleMovimiento(id: number): Observable<DetalleMovimiento> { return this.http.get<DetalleMovimiento>(`/api/movimientos/${id}`); }
+  reversarMovimiento(id: number, motivo: string): Observable<Record<string, unknown>> { return this.write('POST', `/api/movimientos/${id}/reverso`, { motivo, idempotencia: crypto.randomUUID() }); }
+  kardex(sedeId: number, productoId: number): Observable<Kardex[]> { return this.http.get<Kardex[]>('/api/kardex', { params: new HttpParams().set('sedeId', sedeId).set('productoId', productoId) }); }
 
   sedes(): Observable<Sede[]> { return this.http.get<Sede[]>('/api/sedes'); }
   usuarios(): Observable<Usuario[]> { return this.http.get<Usuario[]>('/api/usuarios'); }

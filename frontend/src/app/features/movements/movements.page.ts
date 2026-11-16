@@ -4,7 +4,7 @@ import { finalize, forkJoin } from 'rxjs';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
 import { apiError } from '../../core/errors';
-import { Movimiento, Producto } from '../../core/models';
+import { DetalleMovimiento, Movimiento, Producto } from '../../core/models';
 
 @Component({ selector: 'app-movements-page', imports: [ReactiveFormsModule], templateUrl: './movements.page.html' })
 export class MovementsPage {
@@ -16,6 +16,7 @@ export class MovementsPage {
   readonly guardando = signal(false);
   readonly mensaje = signal('');
   readonly error = signal('');
+  readonly detalle = signal<DetalleMovimiento | null>(null);
   readonly form = new FormGroup({
     tipo: new FormControl('ENTRADA', { nonNullable: true, validators: [Validators.required] }),
     productoId: new FormControl<number | null>(null, [Validators.required]),
@@ -51,5 +52,14 @@ export class MovementsPage {
       next: () => { this.mensaje.set('Movimiento registrado correctamente.'); this.form.reset({ tipo: 'ENTRADA', productoId: null, cantidad: null, motivo: '', referencia: '', proveedor: '' }); this.cargar(); },
       error: (error) => this.error.set(apiError(error))
     });
+  }
+
+  verDetalle(id: number): void { this.error.set(''); this.api.detalleMovimiento(id).subscribe({ next: (r) => this.detalle.set(r), error: (e) => this.error.set(apiError(e)) }); }
+  cerrarDetalle(): void { this.detalle.set(null); }
+  reversar(item: Movimiento): void {
+    const motivo = window.prompt(`Motivo para revertir el movimiento #${item.id}:`)?.trim();
+    if (!motivo) return;
+    this.guardando.set(true); this.error.set('');
+    this.api.reversarMovimiento(item.id, motivo).pipe(finalize(() => this.guardando.set(false))).subscribe({ next: () => { this.mensaje.set(`Movimiento #${item.id} revertido.`); this.detalle.set(null); this.cargar(); }, error: (e) => this.error.set(apiError(e)) });
   }
 }
