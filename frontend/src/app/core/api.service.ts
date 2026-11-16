@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { map, Observable, of, switchMap, tap } from 'rxjs';
-import { Categoria, DetalleMovimiento, Existencia, Kardex, Movimiento, Perfil, Producto, Sede, Transferencia, Unidad, Usuario } from './models';
+import { Auditoria, Categoria, DetalleMovimiento, Existencia, Kardex, Movimiento, Perfil, Producto, Sede, Transferencia, Unidad, Usuario } from './models';
 
 interface CsrfResponse { token: string; headerName: string; }
 type ProductoPayload = Pick<Producto, 'codigo' | 'nombre' | 'categoriaId' | 'unidadId'>;
@@ -75,6 +75,7 @@ export class ApiService {
   transferenciaAccion(id: number, accion: string, motivo: string): Observable<Record<string, unknown>> { return this.write('POST', `/api/transferencias/${id}/${accion}`, { motivo }); }
   ajustar(data: { sedeId: number; productoId: number; conteo: number; motivo: string; idempotencia: string }): Observable<Record<string, unknown>> { return this.write('POST', '/api/ajustes', data); }
   guardarMinimo(data: { sedeId: number; productoId: number; minimo: number }): Observable<void> { return this.write('POST', '/api/existencias/minimo', data); }
+  auditoria(): Observable<Auditoria[]> { return this.http.get<Auditoria[]>('/api/auditoria'); }
 
   registrarMovimiento(data: {
     sedeId: number; tipo: string; motivo: string; referencia?: string; proveedor?: string;

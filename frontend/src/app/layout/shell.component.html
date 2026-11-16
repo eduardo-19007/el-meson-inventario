@@ -9,6 +9,7 @@
       <a routerLink="/movimientos" routerLinkActive="active" (click)="menuAbierto.set(false)">Movimientos</a>
       <a routerLink="/transferencias" routerLinkActive="active" (click)="menuAbierto.set(false)">Transferencias</a>
       @if (auth.esAdmin()) { <a routerLink="/control-stock" routerLinkActive="active" (click)="menuAbierto.set(false)">Control de stock</a> }
+      <a routerLink="/reportes" routerLinkActive="active" (click)="menuAbierto.set(false)">Reportes y auditoría</a>
       @if (auth.esAdmin()) { <a routerLink="/administracion" routerLinkActive="active" (click)="menuAbierto.set(false)">Usuarios y sedes</a> }
     </nav>
     <div class="account">

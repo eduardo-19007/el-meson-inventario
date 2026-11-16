@@ -14,6 +14,7 @@ export const routes: Routes = [
       { path: 'movimientos', loadComponent: () => import('./features/movements/movements.page').then((m) => m.MovementsPage) },
       { path: 'transferencias', loadComponent: () => import('./features/transfers/transfers.page').then((m) => m.TransfersPage) },
       { path: 'control-stock', canActivate: [adminGuard], loadComponent: () => import('./features/stock-control/stock-control.page').then((m) => m.StockControlPage) },
+      { path: 'reportes', loadComponent: () => import('./features/reports/reports.page').then((m) => m.ReportsPage) },
       { path: 'administracion', canActivate: [adminGuard], loadComponent: () => import('./features/admin/admin.page').then((m) => m.AdminPage) }
     ]
   },

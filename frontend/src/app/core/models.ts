@@ -9,4 +9,5 @@ export interface Kardex { id: number; fecha_registro: string; tipo: string; moti
 export interface DetalleMovimiento { id: number; sede_id: number; tipo: string; motivo: string; referencia?: string; fecha_registro?: string; reverso_de_id?: number; transferencia_id?: number; lineas: { producto_id: number; nombre: string; codigo: string; unidad: string; cantidad: number }[]; }
 export interface Usuario { id: number; usuario: string; nombre: string; rol: 'ADMIN' | 'ENCARGADO' | 'CONSULTOR'; activo: boolean; sedes: number[]; }
 export interface Transferencia { id: number; origen_id: number; destino_id: number; origen: string; destino: string; estado: string; incidencia?: string; creada_en?: string; }
+export interface Auditoria { id: number; usuario?: string; accion: string; entidad: string; entidad_id?: number; detalle?: string; fecha?: string; creado_en?: string; }
 export interface ApiProblem { status?: number; detail?: string; errores?: Record<string, string>; }
