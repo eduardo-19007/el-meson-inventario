@@ -6,4 +6,5 @@ export interface Producto { id: number; codigo: string; nombre: string; categori
 export interface Existencia { sedeId: number; sede?: string; productoId: number; codigo?: string; producto?: string; nombre?: string; unidad?: string; cantidad: number; minimo: number; }
 export interface Movimiento { id: number; sedeId: number; sede?: string; tipo: string; motivo: string; referencia?: string; proveedor?: string; fecha?: string; creadoEn?: string; usuario?: string; }
 export interface Usuario { id: number; usuario: string; nombre: string; rol: 'ADMIN' | 'ENCARGADO' | 'CONSULTOR'; activo: boolean; sedes: number[]; }
+export interface Transferencia { id: number; origen_id: number; destino_id: number; origen: string; destino: string; estado: string; incidencia?: string; creada_en?: string; }
 export interface ApiProblem { status?: number; detail?: string; errores?: Record<string, string>; }

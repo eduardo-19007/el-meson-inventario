@@ -7,6 +7,8 @@
       <a routerLink="/dashboard" routerLinkActive="active" (click)="menuAbierto.set(false)">Resumen</a>
       <a routerLink="/productos" routerLinkActive="active" (click)="menuAbierto.set(false)">Productos</a>
       <a routerLink="/movimientos" routerLinkActive="active" (click)="menuAbierto.set(false)">Movimientos</a>
+      <a routerLink="/transferencias" routerLinkActive="active" (click)="menuAbierto.set(false)">Transferencias</a>
+      @if (auth.esAdmin()) { <a routerLink="/control-stock" routerLinkActive="active" (click)="menuAbierto.set(false)">Control de stock</a> }
       @if (auth.esAdmin()) { <a routerLink="/administracion" routerLinkActive="active" (click)="menuAbierto.set(false)">Usuarios y sedes</a> }
     </nav>
     <div class="account">

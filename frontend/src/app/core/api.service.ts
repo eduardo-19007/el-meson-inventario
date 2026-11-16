@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, of, switchMap, tap } from 'rxjs';
-import { Categoria, Existencia, Movimiento, Perfil, Producto, Sede, Unidad, Usuario } from './models';
+import { Categoria, Existencia, Movimiento, Perfil, Producto, Sede, Transferencia, Unidad, Usuario } from './models';
 
 interface CsrfResponse { token: string; headerName: string; }
 type ProductoPayload = Pick<Producto, 'codigo' | 'nombre' | 'categoriaId' | 'unidadId'>;
@@ -59,6 +59,12 @@ export class ApiService {
   sedeEstado(id: number, activo: boolean): Observable<void> { return this.write('PATCH', `/api/sedes/${id}/estado?activo=${activo}`); }
   usuarioCrear(data: Omit<Usuario, 'id'> & { password: string }): Observable<{ id: number }> { return this.write('POST', '/api/usuarios', data); }
   usuarioEditar(id: number, data: Omit<Usuario, 'id'> & { password?: string }): Observable<{ id: number }> { return this.write('PUT', `/api/usuarios/${id}`, data); }
+  destinos(): Observable<Pick<Sede, 'id' | 'nombre'>[]> { return this.http.get<Pick<Sede, 'id' | 'nombre'>[]>('/api/destinos'); }
+  transferencias(): Observable<Transferencia[]> { return this.http.get<Transferencia[]>('/api/transferencias'); }
+  transferenciaCrear(data: { origenId: number; destinoId: number; idempotencia: string; lineas: { productoId: number; cantidad: number; costoUnitario: null }[] }): Observable<Record<string, unknown>> { return this.write('POST', '/api/transferencias', data); }
+  transferenciaAccion(id: number, accion: string, motivo: string): Observable<Record<string, unknown>> { return this.write('POST', `/api/transferencias/${id}/${accion}`, { motivo }); }
+  ajustar(data: { sedeId: number; productoId: number; conteo: number; motivo: string; idempotencia: string }): Observable<Record<string, unknown>> { return this.write('POST', '/api/ajustes', data); }
+  guardarMinimo(data: { sedeId: number; productoId: number; minimo: number }): Observable<void> { return this.write('POST', '/api/existencias/minimo', data); }
 
   registrarMovimiento(data: {
     sedeId: number; tipo: string; motivo: string; referencia?: string; proveedor?: string;

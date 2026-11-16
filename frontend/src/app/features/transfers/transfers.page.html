@@ -1,0 +1,22 @@
+<header class="page-heading"><div><p class="eyebrow">LOGÍSTICA</p><h1>Transferencias entre sedes</h1><p>Controla el envío y la recepción de productos con trazabilidad.</p></div></header>
+@if (mensaje()) { <p class="alert success" role="status">{{ mensaje() }}</p> }
+@if (error()) { <p class="alert error" role="alert">{{ error() }}</p> }
+<div class="content-grid wide-left">
+  <section class="panel"><div class="panel-heading"><h2>Transferencias</h2><span>{{ transferencias().length }} registros</span></div><div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Ruta</th><th>Estado</th><th>Incidencia</th><th>Acciones</th></tr></thead><tbody>
+    @for (item of transferencias(); track item.id) { <tr><td>#{{ item.id }}</td><td><strong>{{ item.origen }}</strong> → {{ item.destino }}</td><td><span class="status" [class.inactive]="item.estado === 'CANCELADA' || item.estado === 'DEVUELTA'">{{ item.estado }}</span></td><td>{{ item.incidencia || '—' }}</td><td class="actions">
+      @if (item.estado === 'BORRADOR' && puedeOperarSede(item.origen_id) && auth.perfil()?.rol !== 'CONSULTOR') { <button class="link-button" type="button" (click)="accion(item, 'despachar')">Despachar</button><button class="link-button danger-text" type="button" (click)="accion(item, 'cancelar')">Cancelar</button> }
+      @if (item.estado === 'DESPACHADA' && puedeOperarSede(item.destino_id) && !item.incidencia && auth.perfil()?.rol !== 'CONSULTOR') { <button class="link-button" type="button" (click)="accion(item, 'recibir')">Recibir</button><button class="link-button danger-text" type="button" (click)="accion(item, 'incidencia')">Reportar incidencia</button> }
+      @if (item.estado === 'DESPACHADA' && item.incidencia && auth.esAdmin()) { <button class="link-button" type="button" (click)="accion(item, 'resolver')">Resolver</button><button class="link-button danger-text" type="button" (click)="accion(item, 'devolver')">Devolver</button> }
+    </td></tr> } @empty { <tr><td class="empty" colspan="5">No existen transferencias.</td></tr> }
+    </tbody></table></div>
+  </section>
+  @if (auth.perfil()?.rol !== 'CONSULTOR') { <section class="panel form-panel"><div class="panel-heading"><h2>Nueva transferencia</h2></div><form [formGroup]="form" (ngSubmit)="crear()">
+    <label for="origen">Sede de origen</label><select id="origen" formControlName="origenId"><option [ngValue]="null">Selecciona</option>@for (s of auth.perfil()?.sedes || []; track s.id) { @if (s.activo) { <option [ngValue]="s.id">{{ s.nombre }}</option> } }</select>
+    <label for="destino">Sede de destino</label><select id="destino" formControlName="destinoId"><option [ngValue]="null">Selecciona</option>@for (s of destinos(); track s.id) { <option [ngValue]="s.id">{{ s.nombre }}</option> }</select>
+    <label for="productoTransferir">Producto</label><select id="productoTransferir" formControlName="productoId"><option [ngValue]="null">Selecciona</option>@for (p of productos(); track p.id) { <option [ngValue]="p.id">{{ p.nombre }} ({{ p.unidad }})</option> }</select>
+    <label for="cantidadTransferir">Cantidad</label><input id="cantidadTransferir" type="number" min="0.001" step="0.001" formControlName="cantidad" />
+    @if (form.touched && form.invalid) { <small>Completa todos los campos con valores válidos.</small> }
+    <button class="button primary" type="submit" [disabled]="form.invalid || procesando()">{{ procesando() ? 'Procesando...' : 'Crear borrador' }}</button>
+  </form></section> }
+</div>

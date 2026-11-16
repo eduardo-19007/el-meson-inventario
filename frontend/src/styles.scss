@@ -37,6 +37,7 @@ td { font-size: 14px; }
 .empty { padding: 28px; color: #71818a; text-align: center; }
 .status { display: inline-block; padding: 4px 7px; color: #17613e; background: #eaf7f0; border-radius: 4px; font-size: 11px; font-weight: 800; }
 .status.inactive { color: #6d7478; background: #eceff1; }
+.status.stock-alert { color: #8a4310; background: #fff0dc; }
 .danger-text { color: #af3e34; }
 .actions { white-space: nowrap; }
 .form-panel form { display: grid; gap: 7px; padding: 18px; }
@@ -51,6 +52,8 @@ form small { color: #a1362e; }
 .tabs button.active { border-bottom-color: #168983; color: #126e69; }
 .checkbox { display: flex; align-items: center; gap: 9px; margin-top: 6px; }
 .checkbox input { width: 18px; min-height: 18px; margin: 0; accent-color: #168983; }
+.stock-table { margin-bottom: 18px; }
+.stock-forms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .activity-list article { display: flex; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #e8edef; }
 .activity-list strong, .activity-list small { display: block; }
 .activity-list small { margin-top: 4px; color: #71818a; }
