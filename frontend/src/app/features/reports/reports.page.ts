@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
@@ -8,19 +8,27 @@ import { Auditoria, Existencia, Movimiento, Transferencia } from '../../core/mod
 @Component({ selector: 'app-reports-page', templateUrl: './reports.page.html' })
 export class ReportsPage {
   private readonly api = inject(ApiService);
+  private readonly cdr = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
   readonly existencias = signal<Existencia[]>([]);
   readonly movimientos = signal<Movimiento[]>([]);
   readonly transferencias = signal<Transferencia[]>([]);
   readonly auditoria = signal<Auditoria[]>([]);
   readonly error = signal('');
-  readonly totalStock = computed(() => this.existencias().reduce((total, e) => total + e.cantidad, 0));
-  readonly alertas = computed(() => this.existencias().filter((e) => e.cantidad <= e.minimo));
+  readonly totalStock = signal(0);
+  readonly alertas = signal<Existencia[]>([]);
+  readonly resumen = signal({ movimientos: 0, transferencias: 0 });
 
   constructor() { this.cargar(); }
   cargar(): void {
     forkJoin({ existencias: this.api.existencias(), movimientos: this.api.movimientos(), transferencias: this.api.transferencias(), auditoria: this.auth.esAdmin() ? this.api.auditoria() : of([] as Auditoria[]) }).subscribe({
-      next: (r) => { this.existencias.set(r.existencias); this.movimientos.set(r.movimientos); this.transferencias.set(r.transferencias); this.auditoria.set(r.auditoria); },
+      next: (r) => {
+        this.existencias.set(r.existencias); this.movimientos.set(r.movimientos); this.transferencias.set(r.transferencias); this.auditoria.set(r.auditoria);
+        this.totalStock.set(r.existencias.reduce((total, e) => total + Number(e.cantidad), 0));
+        this.alertas.set(r.existencias.filter((e) => Number(e.cantidad) <= Number(e.minimo)));
+        this.resumen.set({ movimientos: r.movimientos.length, transferencias: r.transferencias.length });
+        this.cdr.detectChanges();
+      },
       error: (e) => this.error.set(apiError(e))
     });
   }

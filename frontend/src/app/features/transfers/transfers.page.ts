@@ -11,6 +11,7 @@ export class TransfersPage {
   private readonly api = inject(ApiService);
   readonly auth = inject(AuthService);
   readonly transferencias = signal<Transferencia[]>([]);
+  readonly totalTransferencias = signal(0);
   readonly productos = signal<Producto[]>([]);
   readonly destinos = signal<Pick<Sede, 'id' | 'nombre'>[]>([]);
   readonly procesando = signal(false);
@@ -31,7 +32,7 @@ export class TransfersPage {
 
   cargar(): void {
     forkJoin({ transferencias: this.api.transferencias(), productos: this.api.productos(), destinos: this.api.destinos() }).subscribe({
-      next: (r) => { this.transferencias.set(r.transferencias); this.productos.set(r.productos.filter((p) => p.activo)); this.destinos.set(r.destinos); },
+      next: (r) => { this.transferencias.set(r.transferencias); this.totalTransferencias.set(r.transferencias.length); this.productos.set(r.productos.filter((p) => p.activo)); this.destinos.set(r.destinos); },
       error: (e) => this.error.set(apiError(e))
     });
   }

@@ -12,6 +12,7 @@ export class MovementsPage {
   readonly auth = inject(AuthService);
   readonly productos = signal<Producto[]>([]);
   readonly movimientos = signal<Movimiento[]>([]);
+  readonly totalMovimientos = signal(0);
   readonly sedeId = signal<number | null>(null);
   readonly guardando = signal(false);
   readonly mensaje = signal('');
@@ -33,7 +34,7 @@ export class MovementsPage {
 
   cargar(): void {
     forkJoin({ productos: this.api.productos(), movimientos: this.api.movimientos(this.sedeId() || undefined) }).subscribe({
-      next: ({ productos, movimientos }) => { this.productos.set(productos.filter((p) => p.activo)); this.movimientos.set(movimientos); },
+      next: ({ productos, movimientos }) => { this.productos.set(productos.filter((p) => p.activo)); this.movimientos.set(movimientos); this.totalMovimientos.set(movimientos.length); },
       error: (error) => this.error.set(apiError(error))
     });
   }

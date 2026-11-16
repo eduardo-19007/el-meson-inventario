@@ -2,7 +2,7 @@
 @if (mensaje()) { <p class="alert success" role="status">{{ mensaje() }}</p> }
 @if (error()) { <p class="alert error" role="alert">{{ error() }}</p> }
 <div class="content-grid wide-left">
-  <section class="panel"><div class="panel-heading"><h2>Transferencias</h2><span>{{ transferencias().length }} registros</span></div><div class="table-wrap"><table>
+  <section class="panel"><div class="panel-heading"><h2>Transferencias</h2><span>{{ totalTransferencias() }} registros</span></div><div class="table-wrap"><table>
     <thead><tr><th>ID</th><th>Ruta</th><th>Estado</th><th>Incidencia</th><th>Acciones</th></tr></thead><tbody>
     @for (item of transferencias(); track item.id) { <tr><td>#{{ item.id }}</td><td><strong>{{ item.origen }}</strong> → {{ item.destino }}</td><td><span class="status" [class.inactive]="item.estado === 'CANCELADA' || item.estado === 'DEVUELTA'">{{ item.estado }}</span></td><td>{{ item.incidencia || '—' }}</td><td class="actions">
       @if (item.estado === 'BORRADOR' && puedeOperarSede(item.origen_id) && auth.perfil()?.rol !== 'CONSULTOR') { <button class="link-button" type="button" (click)="accion(item, 'despachar')">Despachar</button><button class="link-button danger-text" type="button" (click)="accion(item, 'cancelar')">Cancelar</button> }
