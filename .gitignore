@@ -35,3 +35,15 @@ build/
 .codex-backups/
 src/main/resources/application-local.properties
 .env
+
+### Archivos locales del informe y evidencias ###
+/docs/
+/tmp/
+/README.md
+/frontend/README.md
+*.docx
+*.doc
+*.pdf
+*.pptx
+*.ppt
+~$*
