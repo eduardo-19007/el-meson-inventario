@@ -34,10 +34,12 @@ export class ReportsPage {
   }
 
   exportarStock(): void { this.csv('reporte_existencias.csv', ['Sede', 'Código', 'Producto', 'Unidad', 'Cantidad', 'Mínimo'], this.existencias().map((e) => [e.sede, e.codigo, e.producto, e.unidad, e.cantidad, e.minimo])); }
+  exportarExcel(): void { this.api.reporteExistenciasExcel().subscribe({ next: (archivo) => this.descargar(archivo, 'existencias_el_meson.xlsx'), error: (e) => this.error.set(apiError(e)) }); }
   exportarMovimientos(): void { this.csv('reporte_movimientos.csv', ['ID', 'Sede', 'Tipo', 'Motivo', 'Referencia', 'Usuario', 'Fecha'], this.movimientos().map((m) => [m.id, m.sede, m.tipo, m.motivo, m.referencia, m.usuario, m.fecha])); }
   private csv(nombre: string, cabecera: unknown[], filas: unknown[][]): void {
     const celda = (v: unknown) => `"${String(v ?? '').replaceAll('"', '""')}"`;
     const contenido = [cabecera, ...filas].map((fila) => fila.map(celda).join(';')).join('\r\n');
     const enlace = document.createElement('a'); enlace.href = URL.createObjectURL(new Blob(['\ufeff', contenido], { type: 'text/csv;charset=utf-8' })); enlace.download = nombre; enlace.click(); URL.revokeObjectURL(enlace.href);
   }
+  private descargar(archivo: Blob, nombre: string): void { const enlace = document.createElement('a'); enlace.href = URL.createObjectURL(archivo); enlace.download = nombre; enlace.click(); URL.revokeObjectURL(enlace.href); }
 }

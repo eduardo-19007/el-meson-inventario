@@ -42,4 +42,11 @@ class SeguridadHttpTests {
     @Test void consultorNoCreaSedesNiProductos()throws Exception{login("consulta");assertEquals(403,enviar("/api/sedes","POST","{\"codigo\":\"X\",\"nombre\":\"Prueba\"}",true).statusCode());assertEquals(403,enviar("/api/productos","POST","{}",true).statusCode());}
     @Test void administradorConsultaYCuentaDesactivadaPierdeSesion()throws Exception{login("admin");assertEquals(200,enviar("/api/me","GET",null,false).statusCode());db.update("UPDATE dbo.usuario SET activo=0 WHERE usuario='admin'");assertEquals(401,enviar("/api/me","GET",null,false).statusCode());}
     @Test void setupSeCierraDespuesDePrimeraCuenta()throws Exception{token();assertEquals(409,enviar("/api/setup","POST","{\"usuario\":\"nuevo\",\"nombre\":\"Nuevo\",\"password\":\"ClavePruebas123!\"}",true).statusCode());}
+    @Test void administradorDescargaReporteExcel()throws Exception{
+        login("admin");
+        var respuesta=enviar("/api/reportes/existencias.xlsx","GET",null,false);
+        assertEquals(200,respuesta.statusCode());
+        assertTrue(respuesta.headers().firstValue("Content-Type").orElse("").contains("spreadsheetml"));
+        assertTrue(respuesta.headers().firstValue("Content-Disposition").orElse("").contains("existencias_el_meson.xlsx"));
+    }
 }

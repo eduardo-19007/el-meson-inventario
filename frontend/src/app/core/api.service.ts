@@ -76,6 +76,7 @@ export class ApiService {
   ajustar(data: { sedeId: number; productoId: number; conteo: number; motivo: string; idempotencia: string }): Observable<Record<string, unknown>> { return this.write('POST', '/api/ajustes', data); }
   guardarMinimo(data: { sedeId: number; productoId: number; minimo: number }): Observable<void> { return this.write('POST', '/api/existencias/minimo', data); }
   auditoria(): Observable<Auditoria[]> { return this.http.get<Auditoria[]>('/api/auditoria'); }
+  reporteExistenciasExcel(): Observable<Blob> { return this.http.get('/api/reportes/existencias.xlsx', { responseType: 'blob' }); }
 
   registrarMovimiento(data: {
     sedeId: number; tipo: string; motivo: string; referencia?: string; proveedor?: string;

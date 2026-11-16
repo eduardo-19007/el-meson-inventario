@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.*;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
 import org.springframework.security.web.csrf.CsrfToken;
 import pe.elmeson.inventario.dto.SistemaRequest;
 import pe.elmeson.inventario.service.*;
@@ -13,10 +14,12 @@ import pe.elmeson.inventario.service.*;
 public class SistemaController {
     private final AccesoService acceso;
     private final InventarioService inventario;
+    private final ReporteExcelService reporteExcel;
 
-    public SistemaController(AccesoService acceso, InventarioService inventario) {
+    public SistemaController(AccesoService acceso, InventarioService inventario, ReporteExcelService reporteExcel) {
         this.acceso = acceso;
         this.inventario = inventario;
+        this.reporteExcel = reporteExcel;
     }
 
     @GetMapping("/csrf")
@@ -144,5 +147,12 @@ public class SistemaController {
     @GetMapping("/auditoria")
     public List<Map<String, Object>> auditoria() {
         return inventario.auditoria();
+    }
+
+    @GetMapping(value = "/reportes/existencias.xlsx", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    public ResponseEntity<byte[]> reporteExistenciasExcel() {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=existencias_el_meson.xlsx")
+                .body(reporteExcel.existencias());
     }
 }
