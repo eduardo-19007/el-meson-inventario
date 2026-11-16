@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, of, switchMap, tap } from 'rxjs';
-import { Categoria, Existencia, Movimiento, Perfil, Producto, Unidad } from './models';
+import { Categoria, Existencia, Movimiento, Perfil, Producto, Sede, Unidad, Usuario } from './models';
 
 interface CsrfResponse { token: string; headerName: string; }
 type ProductoPayload = Pick<Producto, 'codigo' | 'nombre' | 'categoriaId' | 'unidadId'>;
@@ -51,6 +51,14 @@ export class ApiService {
     const params = sedeId ? new HttpParams().set('sedeId', sedeId) : undefined;
     return this.http.get<Movimiento[]>('/api/movimientos', { params });
   }
+
+  sedes(): Observable<Sede[]> { return this.http.get<Sede[]>('/api/sedes'); }
+  usuarios(): Observable<Usuario[]> { return this.http.get<Usuario[]>('/api/usuarios'); }
+  sedeCrear(data: Pick<Sede, 'codigo' | 'nombre' | 'direccion'>): Observable<{ id: number }> { return this.write('POST', '/api/sedes', data); }
+  sedeEditar(id: number, data: Pick<Sede, 'codigo' | 'nombre' | 'direccion'>): Observable<{ id: number }> { return this.write('PUT', `/api/sedes/${id}`, data); }
+  sedeEstado(id: number, activo: boolean): Observable<void> { return this.write('PATCH', `/api/sedes/${id}/estado?activo=${activo}`); }
+  usuarioCrear(data: Omit<Usuario, 'id'> & { password: string }): Observable<{ id: number }> { return this.write('POST', '/api/usuarios', data); }
+  usuarioEditar(id: number, data: Omit<Usuario, 'id'> & { password?: string }): Observable<{ id: number }> { return this.write('PUT', `/api/usuarios/${id}`, data); }
 
   registrarMovimiento(data: {
     sedeId: number; tipo: string; motivo: string; referencia?: string; proveedor?: string;

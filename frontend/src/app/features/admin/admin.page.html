@@ -1,0 +1,83 @@
+<header class="page-heading">
+  <div>
+    <p class="eyebrow">CONFIGURACIÓN</p>
+    <h1>Usuarios y sedes</h1>
+    <p>Administra los accesos y los locales que participan en el inventario.</p>
+  </div>
+</header>
+
+@if (error()) { <p class="alert error" role="alert">{{ error() }}</p> }
+@if (mensaje()) { <p class="alert success" role="status">{{ mensaje() }}</p> }
+
+<div class="tabs" role="tablist" aria-label="Opciones de administración">
+  <button type="button" role="tab" [attr.aria-selected]="tab() === 'usuarios'" [class.active]="tab() === 'usuarios'" (click)="tab.set('usuarios')">Usuarios</button>
+  <button type="button" role="tab" [attr.aria-selected]="tab() === 'sedes'" [class.active]="tab() === 'sedes'" (click)="tab.set('sedes')">Sedes</button>
+</div>
+
+@if (tab() === 'usuarios') {
+  <div class="content-grid wide-left">
+    <section class="panel" aria-labelledby="usuarios-titulo">
+      <div class="panel-heading"><h2 id="usuarios-titulo">Usuarios registrados</h2><span>{{ usuarios().length }} usuarios</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Sede</th><th>Estado</th><th>Acción</th></tr></thead>
+          <tbody>
+            @for (item of usuarios(); track item.id) {
+              <tr>
+                <td><strong>{{ item.usuario }}</strong></td><td>{{ item.nombre }}</td><td>{{ item.rol }}</td>
+                <td>{{ nombreSedes(item.sedes) }}</td>
+                <td><span class="status" [class.inactive]="!item.activo">{{ item.activo ? 'Activo' : 'Inactivo' }}</span></td>
+                <td><button class="link-button" type="button" (click)="editarUsuario(item)">Editar</button></td>
+              </tr>
+            } @empty { <tr><td class="empty" colspan="6">No hay usuarios registrados.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel form-panel" aria-labelledby="usuario-form-titulo">
+      <div class="panel-heading"><h2 id="usuario-form-titulo">{{ editandoUsuario() ? 'Editar usuario' : 'Nuevo usuario' }}</h2></div>
+      <form [formGroup]="usuarioForm" (ngSubmit)="guardarUsuario()">
+        <label for="usuario">Usuario</label><input id="usuario" formControlName="usuario" autocomplete="off" />
+        <label for="nombre">Nombre completo</label><input id="nombre" formControlName="nombre" autocomplete="name" />
+        <label for="password">{{ editandoUsuario() ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</label>
+        <input id="password" type="password" formControlName="password" autocomplete="new-password" />
+        @if (!editandoUsuario()) { <small>Mínimo 12 caracteres.</small> }
+        <label for="rol">Rol</label>
+        <select id="rol" formControlName="rol"><option value="ADMIN">Administrador</option><option value="ENCARGADO">Encargado</option><option value="CONSULTOR">Consultor</option></select>
+        <label for="sedeId">Sede asignada</label>
+        <select id="sedeId" formControlName="sedeId"><option [ngValue]="null">Sin sede / todas para ADMIN</option>@for (sede of sedes(); track sede.id) { <option [ngValue]="sede.id">{{ sede.codigo }} — {{ sede.nombre }}</option> }</select>
+        <label class="checkbox"><input type="checkbox" formControlName="activo" /> Usuario activo</label>
+        <div class="form-actions"><button class="button primary" type="submit" [disabled]="guardando()">Guardar</button><button class="button secondary" type="button" (click)="limpiarUsuario()">Limpiar</button></div>
+      </form>
+    </section>
+  </div>
+}
+
+@if (tab() === 'sedes') {
+  <div class="content-grid wide-left">
+    <section class="panel" aria-labelledby="sedes-titulo">
+      <div class="panel-heading"><h2 id="sedes-titulo">Sedes registradas</h2><span>{{ sedes().length }} sedes</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Código</th><th>Nombre</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            @for (item of sedes(); track item.id) {
+              <tr><td><strong>{{ item.codigo }}</strong></td><td>{{ item.nombre }}</td><td>{{ item.direccion || 'Sin registrar' }}</td><td><span class="status" [class.inactive]="!item.activo">{{ item.activo ? 'Activa' : 'Inactiva' }}</span></td><td class="actions"><button class="link-button" type="button" (click)="editarSede(item)">Editar</button><button class="link-button" type="button" (click)="cambiarSede(item)">{{ item.activo ? 'Desactivar' : 'Activar' }}</button></td></tr>
+            } @empty { <tr><td class="empty" colspan="5">No hay sedes registradas.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel form-panel" aria-labelledby="sede-form-titulo">
+      <div class="panel-heading"><h2 id="sede-form-titulo">{{ editandoSede() ? 'Editar sede' : 'Nueva sede' }}</h2></div>
+      <form [formGroup]="sedeForm" (ngSubmit)="guardarSede()">
+        <label for="codigo">Código</label><input id="codigo" formControlName="codigo" placeholder="SEDE02" />
+        <label for="sedeNombre">Nombre</label><input id="sedeNombre" formControlName="nombre" />
+        <label for="direccion">Dirección</label><textarea id="direccion" formControlName="direccion" rows="3"></textarea>
+        <div class="form-actions"><button class="button primary" type="submit" [disabled]="guardando()">Guardar</button><button class="button secondary" type="button" (click)="limpiarSede()">Limpiar</button></div>
+      </form>
+    </section>
+  </div>
+}

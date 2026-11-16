@@ -46,6 +46,11 @@ textarea { resize: vertical; }
 input:focus, select:focus, textarea:focus { outline: 3px solid rgb(22 137 131 / 15%); border-color: #168983; }
 form small { color: #a1362e; }
 .form-actions { display: flex; gap: 8px; margin-top: 10px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid #cedae0; }
+.tabs button { padding: 11px 18px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: #5b6d77; font-weight: 750; cursor: pointer; }
+.tabs button.active { border-bottom-color: #168983; color: #126e69; }
+.checkbox { display: flex; align-items: center; gap: 9px; margin-top: 6px; }
+.checkbox input { width: 18px; min-height: 18px; margin: 0; accent-color: #168983; }
 .activity-list article { display: flex; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #e8edef; }
 .activity-list strong, .activity-list small { display: block; }
 .activity-list small { margin-top: 4px; color: #71818a; }
